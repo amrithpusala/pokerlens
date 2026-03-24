@@ -8,12 +8,18 @@ from typing import Optional
 
 from app.monte_carlo import compute_equity
 from app.evaluator import RANK_MAP, SUIT_MAP
+from app import model_server
 
 app = FastAPI(
   title="PokerLens API",
-  description="poker equity calculator using monte carlo simulation",
-  version="0.1.0"
+  description="poker equity calculator using monte carlo simulation and neural net inference",
+  version="0.2.0"
 )
+
+
+@app.on_event("startup")
+def startup():
+  model_server.load_model()
 
 # allow frontend to call the api from a different origin (e.g. localhost:5173)
 app.add_middleware(
@@ -130,3 +136,71 @@ def equity(req: EquityRequest):
   )
 
   return EquityResponse(**result)
+
+
+class FastEquityRequest(BaseModel):
+  hand: list[str] = Field(..., min_length=2, max_length=2,
+                          description="your 2 hole cards, e.g. ['Ah', 'Kd']")
+  board: list[str] = Field(default=[],
+                           description="community cards (0-5), e.g. ['Ts', '9s', '2c']")
+  opponents: int = Field(default=1, ge=1, le=9,
+                         description="number of opponents (1-9)")
+
+
+class FastEquityResponse(BaseModel):
+  equity: float
+  method: str
+  time_ms: float
+
+
+@app.post("/api/equity-fast", response_model=FastEquityResponse)
+def equity_fast(req: FastEquityRequest):
+  """compute equity using the trained neural network.
+  returns a single equity value (win + 0.5 * tie) in under 1ms.
+  falls back to monte carlo if the model is not loaded.
+  """
+  all_cards = req.hand + req.board
+
+  for card in all_cards:
+    if not validate_card(card):
+      raise HTTPException(
+        status_code=400,
+        detail=f"invalid card: '{card}'. use format like 'Ah', 'Td', '2c'."
+      )
+
+  if not validate_no_duplicates(all_cards):
+    raise HTTPException(
+      status_code=400,
+      detail="duplicate cards found. each card can only appear once."
+    )
+
+  if len(req.board) in (1, 2):
+    raise HTTPException(
+      status_code=400,
+      detail="board must have 0, 3, 4, or 5 cards."
+    )
+
+  import time
+  start = time.perf_counter()
+
+  if model_server.is_loaded():
+    equity = model_server.predict_equity(req.hand, req.board, req.opponents)
+    elapsed = (time.perf_counter() - start) * 1000
+    return FastEquityResponse(equity=round(equity, 4), method="neural_net", time_ms=round(elapsed, 3))
+  else:
+    # fallback to MC with low iteration count for speed
+    result = compute_equity(
+      hand_strs=req.hand,
+      board_strs=req.board,
+      num_opponents=req.opponents,
+      iterations=3000
+    )
+    elapsed = (time.perf_counter() - start) * 1000
+    equity = result['win'] + result['tie'] * 0.5
+    return FastEquityResponse(equity=round(equity, 4), method="monte_carlo_fallback", time_ms=round(elapsed, 3))
+
+
+@app.get("/api/model-status")
+def model_status():
+  """check if the neural net model is loaded and ready."""
+  return {"loaded": model_server.is_loaded()}
