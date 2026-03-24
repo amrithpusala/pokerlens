@@ -2,7 +2,10 @@ import { useState } from 'react'
 import { GlowCard, Slot, Picker } from './CardPicker'
 import { EquityResult, LoadingSkeleton } from './EquityDisplay'
 
-const API_URL = '/api/equity'
+// in dev, vite proxies /api to localhost:8000
+// in production, VITE_API_URL points to the deployed backend
+const API_BASE = import.meta.env.VITE_API_URL || ''
+const API_URL = `${API_BASE}/api/equity`
 
 const LABEL_STYLE = {
   fontFamily: 'Syne',
