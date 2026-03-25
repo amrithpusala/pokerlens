@@ -1,11 +1,15 @@
 import { useState } from 'react'
 import ParticleCanvas from './components/ParticleCanvas'
 import CalculatorPage from './components/CalculatorPage'
+import RangeGridPage from './components/RangeGridPage'
+import HandHistoryPage from './components/HandHistoryPage'
 import HowItWorksPage from './components/HowItWorksPage'
 import AboutPage from './components/AboutPage'
 
 const TABS = [
   { id: 'calc', label: 'Calculator', icon: '\u2660' },
+  { id: 'range', label: 'Range Grid', icon: '\u25A6' },
+  { id: 'history', label: 'History', icon: '\u2630' },
   { id: 'how', label: 'How It Works', icon: '\u2699' },
   { id: 'about', label: 'About', icon: '\u2726' },
 ]
@@ -91,6 +95,8 @@ export default function App() {
         {/* page content */}
         <main className="max-w-2xl mx-auto px-6 py-8" key={tab}>
           {tab === 'calc' && <CalculatorPage />}
+          {tab === 'range' && <RangeGridPage />}
+          {tab === 'history' && <HandHistoryPage />}
           {tab === 'how' && <HowItWorksPage />}
           {tab === 'about' && <AboutPage />}
         </main>

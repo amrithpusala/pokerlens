@@ -82,12 +82,12 @@ export default function AboutPage() {
             { done: true, label: 'Monte Carlo equity engine with multiprocessing' },
             { done: true, label: 'FastAPI backend with equity endpoints' },
             { done: true, label: 'React frontend with card picker UI' },
-            { done: false, label: 'Neural net training pipeline' },
-            { done: false, label: 'Neural net inference endpoint (<10ms)' },
-            { done: false, label: 'Pre-flop range grid heatmap' },
-            { done: false, label: 'Hand history parser and session review' },
+            { done: true, label: 'Neural net training pipeline' },
+            { done: true, label: 'Neural net inference endpoint (<10ms)' },
+            { done: true, label: 'Pre-flop range grid heatmap' },
+            { done: true, label: 'Hand history parser and session review' },
             { done: false, label: 'Redis caching layer' },
-            { done: false, label: 'Deploy to Vercel + Railway' },
+            { done: true, label: 'Deploy to Vercel + Railway' },
           ].map((item, i) => (
             <div
               key={i}

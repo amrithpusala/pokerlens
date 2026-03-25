@@ -231,3 +231,71 @@ def equity_fast(req: FastEquityRequest, request: Request):
 @app.get("/api/model-status")
 def model_status():
   return {"loaded": model_server.is_loaded()}
+
+
+# --- range chart endpoint ---
+
+from app.range_chart import compute_range_chart
+
+class RangeChartRequest(BaseModel):
+  opponents: int = Field(default=1, ge=1, le=4,
+                         description="number of opponents (1-4)")
+
+
+@app.post("/api/range-chart")
+def range_chart(req: RangeChartRequest, request: Request):
+  """compute pre-flop equity for all 169 starting hands.
+  returns a 13x13 grid of equity values for the range heatmap.
+  limited to 1-4 opponents to keep computation reasonable.
+  """
+  check_rate_limit(request.client.host)
+
+  start = time.perf_counter()
+  result = compute_range_chart(req.opponents)
+  elapsed = (time.perf_counter() - start) * 1000
+  result['time_ms'] = round(elapsed, 1)
+  return result
+
+
+# --- hand history parser endpoint ---
+
+import re
+from app.hand_parser import parse_pokerstars_hands
+
+MAX_UPLOAD_SIZE = 512 * 1024  # 512 KB max upload
+
+class HandHistoryResponse(BaseModel):
+  hands_parsed: int
+  hands: list
+
+
+@app.post("/api/parse-history", response_model=HandHistoryResponse)
+async def parse_history(request: Request):
+  """parse a PokerStars hand history text file.
+  upload the raw .txt file as the request body (Content-Type: text/plain).
+  returns parsed hands with street-by-street actions and equity at each street.
+  """
+  check_rate_limit(request.client.host)
+
+  content_type = request.headers.get("content-type", "")
+  if "text/plain" not in content_type and "application/octet-stream" not in content_type:
+    raise HTTPException(status_code=400, detail="expected text/plain content type")
+
+  body = await request.body()
+  if len(body) > MAX_UPLOAD_SIZE:
+    raise HTTPException(
+      status_code=400,
+      detail=f"file too large. max size is {MAX_UPLOAD_SIZE // 1024} KB."
+    )
+
+  try:
+    text = body.decode('utf-8', errors='replace')
+  except Exception:
+    raise HTTPException(status_code=400, detail="could not decode file as text")
+
+  # basic sanitization: strip null bytes and non-printable chars
+  text = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f]', '', text)
+
+  hands = parse_pokerstars_hands(text)
+  return HandHistoryResponse(hands_parsed=len(hands), hands=hands[:100])
+
