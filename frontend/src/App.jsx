@@ -1,10 +1,13 @@
 import { useState } from 'react'
+import AuthProvider, { useAuth } from './components/AuthProvider'
 import ParticleCanvas from './components/ParticleCanvas'
 import CalculatorPage from './components/CalculatorPage'
 import RangeGridPage from './components/RangeGridPage'
 import HandHistoryPage from './components/HandHistoryPage'
 import HowItWorksPage from './components/HowItWorksPage'
 import AboutPage from './components/AboutPage'
+import AuthPage from './components/AuthPage'
+import UserMenu from './components/UserMenu'
 
 const TABS = [
   { id: 'calc', label: 'Calculator', icon: '\u2660' },
@@ -14,15 +17,25 @@ const TABS = [
   { id: 'about', label: 'About', icon: '\u2726' },
 ]
 
-export default function App() {
+function AppContent() {
+  const { user, loading } = useAuth()
   const [tab, setTab] = useState('calc')
+
+  // show auth page if user clicks account while signed out
+  const [showAuth, setShowAuth] = useState(false)
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="w-5 h-5 border-2 border-zinc-700 border-t-white rounded-full animate-spin" />
+      </div>
+    )
+  }
 
   return (
     <div className="relative min-h-screen bg-black text-white overflow-hidden font-body">
-      {/* particles */}
       <ParticleCanvas />
 
-      {/* top glow */}
       <div
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px]
           rounded-full pointer-events-none"
@@ -44,7 +57,7 @@ export default function App() {
                 <div className="flex items-baseline gap-2">
                   <h1
                     className="text-xl font-bold tracking-tight cursor-pointer font-display"
-                    onClick={() => setTab('calc')}
+                    onClick={() => { setTab('calc'); setShowAuth(false) }}
                   >
                     PokerLens
                   </h1>
@@ -54,51 +67,73 @@ export default function App() {
                   </span>
                 </div>
               </div>
-              <a
-                href="https://github.com/amrithpusala/pokerlens"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-zinc-700 font-mono text-xs hover:text-zinc-400 transition-colors"
-              >
-                github
-              </a>
+
+              <div className="flex items-center gap-3">
+                <a
+                  href="https://github.com/amrithpusala/pokerlens"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-zinc-700 font-mono text-xs hover:text-zinc-400 transition-colors"
+                >
+                  github
+                </a>
+                {user ? (
+                  <UserMenu />
+                ) : (
+                  <button
+                    onClick={() => setShowAuth(true)}
+                    className="px-3 py-1.5 rounded-lg border border-zinc-800 text-zinc-400
+                      text-xs font-mono hover:border-zinc-600 hover:text-zinc-300 transition-all"
+                  >
+                    sign in
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* tabs */}
-            <div className="flex gap-0">
-              {TABS.map((t) => (
-                <button
-                  key={t.id}
-                  onClick={() => setTab(t.id)}
-                  className={`relative px-5 py-3 text-sm font-medium transition-all
-                    duration-300 font-display
-                    ${tab === t.id ? 'text-white' : 'text-zinc-600 hover:text-zinc-400'}`}
-                >
-                  <span className="flex items-center gap-2">
-                    <span className={`text-xs ${tab === t.id ? 'opacity-100' : 'opacity-40'}`}>
-                      {t.icon}
+            {!showAuth && (
+              <div className="flex gap-0 overflow-x-auto">
+                {TABS.map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => setTab(t.id)}
+                    className={`relative px-4 py-3 text-sm font-medium transition-all
+                      duration-300 font-display whitespace-nowrap
+                      ${tab === t.id ? 'text-white' : 'text-zinc-600 hover:text-zinc-400'}`}
+                  >
+                    <span className="flex items-center gap-1.5">
+                      <span className={`text-xs ${tab === t.id ? 'opacity-100' : 'opacity-40'}`}>
+                        {t.icon}
+                      </span>
+                      {t.label}
                     </span>
-                    {t.label}
-                  </span>
-                  {tab === t.id && (
-                    <div
-                      className="absolute bottom-0 left-0 right-0 h-[2px] bg-emerald-400"
-                      style={{ animation: 'fadeIn .2s ease-out' }}
-                    />
-                  )}
-                </button>
-              ))}
-            </div>
+                    {tab === t.id && (
+                      <div
+                        className="absolute bottom-0 left-0 right-0 h-[2px] bg-emerald-400"
+                        style={{ animation: 'fadeIn .2s ease-out' }}
+                      />
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </header>
 
         {/* page content */}
-        <main className="max-w-2xl mx-auto px-6 py-8" key={tab}>
-          {tab === 'calc' && <CalculatorPage />}
-          {tab === 'range' && <RangeGridPage />}
-          {tab === 'history' && <HandHistoryPage />}
-          {tab === 'how' && <HowItWorksPage />}
-          {tab === 'about' && <AboutPage />}
+        <main className="max-w-2xl mx-auto px-6 py-8" key={showAuth ? 'auth' : tab}>
+          {showAuth && !user ? (
+            <AuthPage />
+          ) : (
+            <>
+              {tab === 'calc' && <CalculatorPage />}
+              {tab === 'range' && <RangeGridPage />}
+              {tab === 'history' && <HandHistoryPage />}
+              {tab === 'how' && <HowItWorksPage />}
+              {tab === 'about' && <AboutPage />}
+            </>
+          )}
         </main>
 
         {/* footer */}
@@ -112,5 +147,13 @@ export default function App() {
         </footer>
       </div>
     </div>
+  )
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   )
 }
