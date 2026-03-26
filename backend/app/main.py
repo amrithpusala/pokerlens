@@ -299,3 +299,38 @@ async def parse_history(request: Request):
   hands = parse_pokerstars_hands(text)
   return HandHistoryResponse(hands_parsed=len(hands), hands=hands[:100])
 
+
+# --- action advisor endpoint ---
+
+from app.advisor import compute_advice
+
+class AdvisorRequest(BaseModel):
+  hand: list[str] = Field(..., min_length=2, max_length=2,
+                          description="your 2 hole cards")
+  board: list[str] = Field(default=[],
+                           description="community cards (0-5)")
+  opponents: int = Field(default=1, ge=1, le=9,
+                         description="number of opponents")
+  pot_size: float = Field(..., ge=0,
+                          description="current pot size")
+  bet_to_call: float = Field(default=0, ge=0,
+                              description="amount you need to call (0 if no bet)")
+
+
+@app.post("/api/advisor")
+def advisor(req: AdvisorRequest, request: Request):
+  """get an action recommendation based on equity, pot odds, and draw analysis.
+  returns fold, call, raise, check, or bet with reasoning.
+  """
+  check_rate_limit(request.client.host)
+  validate_request(req.hand, req.board)
+
+  result = compute_advice(
+    hand=req.hand,
+    board=req.board,
+    opponents=req.opponents,
+    pot_size=req.pot_size,
+    bet_to_call=req.bet_to_call,
+  )
+  return result
+
