@@ -133,11 +133,11 @@ def main():
                       help='batch size for training')
   parser.add_argument('--lr', type=float, default=0.001,
                       help='learning rate')
-  parser.add_argument('--hidden-dim', type=int, default=256,
+  parser.add_argument('--hidden-dim', type=int, default=512,
                       help='hidden layer size')
-  parser.add_argument('--num-layers', type=int, default=4,
+  parser.add_argument('--num-layers', type=int, default=6,
                       help='number of hidden layers')
-  parser.add_argument('--patience', type=int, default=8,
+  parser.add_argument('--patience', type=int, default=10,
                       help='early stopping patience (epochs without improvement)')
   args = parser.parse_args()
 
@@ -174,12 +174,12 @@ def main():
   ).to(device)
   print(f'model parameters: {count_parameters(model):,}')
 
-  optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
+  optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=1e-4)
   criterion = nn.MSELoss()
 
-  # learning rate scheduler: reduce LR when validation loss plateaus
-  scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-    optimizer, mode='min', factor=0.5, patience=3
+  # cosine annealing gives smoother LR decay than ReduceLROnPlateau
+  scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+    optimizer, T_max=args.epochs, eta_min=1e-6
   )
 
   # training loop with early stopping
@@ -201,7 +201,7 @@ def main():
 
     print(f'{epoch:5d} {train_loss:12.6f} {val_loss:12.6f} {val_mae:10.4f} {current_lr:10.6f} {elapsed:7.1f}s')
 
-    scheduler.step(val_loss)
+    scheduler.step()
 
     # save best model
     if val_loss < best_val_loss:
