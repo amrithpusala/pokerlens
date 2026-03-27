@@ -6,7 +6,7 @@ const LABEL_STYLE = {
   fontWeight: 600,
   letterSpacing: '.12em',
   textTransform: 'uppercase',
-  color: '#52525b',
+  color: '#a1a1aa',
   marginBottom: '.75rem',
   display: 'block',
 }
@@ -227,7 +227,7 @@ export default function RangeGridPage() {
 
           {/* meta */}
           {method && (
-            <div className="text-center mt-3 font-mono text-xs text-zinc-700">
+            <div className="text-center mt-3 font-mono text-xs text-zinc-500">
               {method === 'neural_net' ? 'neural net inference' : 'monte carlo'} · {timeMs}ms
             </div>
           )}

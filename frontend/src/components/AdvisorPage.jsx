@@ -7,7 +7,7 @@ const LABEL_STYLE = {
   fontWeight: 600,
   letterSpacing: '.12em',
   textTransform: 'uppercase',
-  color: '#52525b',
+  color: '#a1a1aa',
   marginBottom: '.75rem',
   display: 'block',
 }
@@ -142,7 +142,7 @@ export default function AdvisorPage() {
                   active={picker?.type === 'board' && picker?.i === 4} />
             }
           </div>
-          <span className="text-zinc-700 font-mono text-xs ml-2">
+          <span className="text-zinc-500 font-mono text-xs ml-2">
             {board.length === 0 && 'pre-flop'}
             {board.length === 3 && 'flop'}
             {board.length === 4 && 'turn'}
@@ -206,7 +206,7 @@ export default function AdvisorPage() {
             uppercase border transition-all duration-300
             ${canSubmit && boardOk
               ? 'border-emerald-400/30 text-emerald-400 hover:bg-emerald-400/10 active:scale-[0.98]'
-              : 'border-zinc-800 text-zinc-700 cursor-not-allowed'}`}
+              : 'border-zinc-800 text-zinc-600 cursor-not-allowed'}`}
             style={{ fontFamily: 'Syne' }}>
             {loading ? (
               <span className="flex items-center justify-center gap-2">
@@ -310,7 +310,7 @@ export default function AdvisorPage() {
             </div>
           </div>
 
-          <div className="text-center font-mono text-xs text-zinc-700">
+          <div className="text-center font-mono text-xs text-zinc-500">
             {result.method === 'neural_net' ? 'neural net inference' : 'monte carlo'}
           </div>
         </div>

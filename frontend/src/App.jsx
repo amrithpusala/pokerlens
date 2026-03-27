@@ -50,9 +50,9 @@ function AppContent() {
           <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-5 pb-0">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1 text-zinc-600 text-lg">
+                <div className="flex items-center gap-1 text-zinc-400 text-lg">
                   <span>♠</span>
-                  <span className="text-red-500/60">♥</span>
+                  <span className="text-red-500/80">♥</span>
                 </div>
                 <div className="flex items-baseline gap-2">
                   <h1
@@ -73,7 +73,7 @@ function AppContent() {
                   href="https://github.com/amrithpusala/pokerlens"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-zinc-700 font-mono text-xs hover:text-zinc-400 transition-colors"
+                  className="text-zinc-500 font-mono text-xs hover:text-zinc-300 transition-colors"
                 >
                   github
                 </a>
@@ -100,10 +100,10 @@ function AppContent() {
                     onClick={() => setTab(t.id)}
                     className={`relative px-3 sm:px-4 py-3 text-xs sm:text-sm font-medium
                       transition-all duration-300 font-display whitespace-nowrap shrink-0
-                      ${tab === t.id ? 'text-white' : 'text-zinc-600 hover:text-zinc-400'}`}
+                      ${tab === t.id ? 'text-white' : 'text-zinc-500 hover:text-zinc-300'}`}
                   >
                     <span className="flex items-center gap-1.5">
-                      <span className={`text-xs ${tab === t.id ? 'opacity-100' : 'opacity-40'}`}>
+                      <span className={`text-xs ${tab === t.id ? 'opacity-100' : 'opacity-60'}`}>
                         {t.icon}
                       </span>
                       {t.label}
@@ -137,10 +137,10 @@ function AppContent() {
         {/* footer */}
         <footer className="border-t border-zinc-900/50 mt-16">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 py-5 flex items-center justify-between">
-            <span className="text-zinc-800 font-mono text-xs">
+            <span className="text-zinc-600 font-mono text-xs">
               monte carlo · treys · pytorch
             </span>
-            <span className="text-zinc-800 font-mono text-xs">amrith pusala</span>
+            <span className="text-zinc-600 font-mono text-xs">amrith pusala</span>
           </div>
         </footer>
       </div>

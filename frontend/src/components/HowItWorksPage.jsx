@@ -80,7 +80,7 @@ export default function HowItWorksPage() {
               <div className="text-zinc-600 font-mono text-[10px] mt-0.5">{item.sub}</div>
             </div>
           ) : (
-            <div key={i} className="text-zinc-700 text-lg">{'\u2192'}</div>
+            <div key={i} className="text-zinc-500 text-lg">{'\u2192'}</div>
           )
         )}
       </div>

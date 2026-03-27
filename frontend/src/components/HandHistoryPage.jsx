@@ -102,7 +102,7 @@ function HandCard({ hand, index }) {
                     <div key={i} className="font-mono text-xs text-zinc-500">
                       <span className={a.player === hand.hero ? 'text-white' : ''}>{a.player}</span>
                       <span className="text-zinc-600 ml-1">{a.action}</span>
-                      {a.detail && <span className="text-zinc-700 ml-1">{a.detail}</span>}
+                      {a.detail && <span className="text-zinc-500 ml-1">{a.detail}</span>}
                     </div>
                   ))}
                 </div>
@@ -317,7 +317,7 @@ export default function HandHistoryPage() {
                 <span className="text-red-400">{lost}L</span>
                 <span className="text-zinc-500">{folded}F</span>
               </div>
-              {fileName && <span className="text-zinc-700 font-mono text-xs">{fileName}</span>}
+              {fileName && <span className="text-zinc-500 font-mono text-xs">{fileName}</span>}
             </div>
             <div className="flex items-center gap-2">
               {/* save button (signed-in users only) */}

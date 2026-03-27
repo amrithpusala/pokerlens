@@ -113,7 +113,7 @@ export function EquityResult({ result }) {
     fontWeight: 600,
     letterSpacing: '.12em',
     textTransform: 'uppercase',
-    color: '#71717a',
+    color: '#a1a1aa',
   }
 
   return (
@@ -131,7 +131,7 @@ export function EquityResult({ result }) {
       <div className="relative">
         <div className="flex justify-between items-baseline mb-3">
           <span style={lbl}>Equity</span>
-          <span className="font-mono text-xs text-zinc-700">
+          <span className="font-mono text-xs text-zinc-500">
             {result.iterations.toLocaleString()} iter · {result.time_ms}ms
           </span>
         </div>
