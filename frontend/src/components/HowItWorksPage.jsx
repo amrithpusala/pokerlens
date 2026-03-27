@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 
 function StepCard({ number, title, desc, icon, delay }) {
   const [visible, setVisible] = useState(false)
-
   useEffect(() => {
     const timer = setTimeout(() => setVisible(true), delay)
     return () => clearTimeout(timer)
@@ -10,8 +9,7 @@ function StepCard({ number, title, desc, icon, delay }) {
 
   return (
     <div className={`transition-all duration-700
-      ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
-    >
+      ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
       <div className="relative group">
         <div className="absolute -inset-0.5 rounded-2xl bg-gradient-to-b from-zinc-700/20
           to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm" />
@@ -51,27 +49,27 @@ function CodeBlock({ code }) {
 export default function HowItWorksPage() {
   return (
     <div className="space-y-12" style={{ animation: 'fadeIn .4s ease-out' }}>
-      {/* hero */}
       <div className="text-center py-8">
         <h2 className="text-3xl font-bold tracking-tight mb-3" style={{ fontFamily: 'Syne' }}>
           How It Works
         </h2>
         <p className="text-zinc-500 max-w-md mx-auto text-sm leading-relaxed">
-          Three layers of engineering: brute-force simulation for precision,
-          a neural network for speed, and a clean API to serve both.
+          Four layers of engineering: brute-force simulation for precision,
+          a neural network for speed, draw analysis for practical advice,
+          and a clean API serving it all.
         </p>
       </div>
 
-      {/* pipeline diagram */}
+      {/* pipeline */}
       <div className="flex items-center justify-center gap-3 py-4 flex-wrap">
         {[
-          { label: 'Your Hand', sub: '2 cards' },
+          { label: 'Your Hand', sub: '2 cards + board' },
           null,
           { label: 'MC Engine', sub: '10K rollouts' },
           null,
-          { label: 'Neural Net', sub: '<10ms' },
+          { label: 'Neural Net', sub: '<1ms' },
           null,
-          { label: 'Equity %', sub: 'win/tie/loss' },
+          { label: 'Advisor', sub: 'action + math' },
         ].map((item, i) =>
           item ? (
             <div key={i} className="bg-zinc-900/50 border border-zinc-800/60 rounded-xl
@@ -87,19 +85,25 @@ export default function HowItWorksPage() {
         )}
       </div>
 
-      {/* step cards */}
+      {/* steps */}
       <div className="space-y-4">
         <StepCard number={1} delay={100} icon="#1" title="Hand Evaluation"
           desc="Every poker hand gets a numeric strength score using tuple-based comparison. A hand like (FLUSH, 12, 10, 8, 5, 3) automatically beats (FLUSH, 12, 10, 8, 5, 2) because Python compares tuples element by element. For 7-card Hold'em, we check all 21 possible 5-card combinations and keep the strongest." />
 
-        <StepCard number={2} delay={250} icon="#2" title="Monte Carlo Simulation"
+        <StepCard number={2} delay={200} icon="#2" title="Monte Carlo Simulation"
           desc="To compute equity, we run thousands of random rollouts. Each rollout deals random remaining board cards and random opponent hands, then evaluates who wins. After 10,000 rollouts, the win percentage converges to the true equity within roughly 1%. The simulation is parallelized across CPU cores using Python multiprocessing." />
 
-        <StepCard number={3} delay={400} icon="#3" title="Neural Network Inference"
-          desc="Monte Carlo takes around 500ms per query. To get sub-10ms responses, we train a feedforward neural network on 500K+ MC simulation results. The input is a 53-dimensional vector: 52 bits for card presence plus the opponent count. The output is a single equity float. The trained model achieves over 99% correlation with MC results, a 100x speedup." />
+        <StepCard number={3} delay={300} icon="#3" title="Neural Network Inference"
+          desc="Monte Carlo takes around 500ms per query. To get sub-millisecond responses, we trained a feedforward neural network on 50K+ MC simulation results. The input is a 53-dimensional vector: 52 bits for card presence plus the opponent count. The output is a single equity float. Inference runs in under 1ms, over 8,000x faster than the MC engine." />
 
-        <StepCard number={4} delay={550} icon="#4" title="API Layer"
-          desc="FastAPI serves both engines. POST /api/equity returns precise Monte Carlo results. POST /api/equity-fast returns neural net inference. The frontend calls the fast endpoint by default and falls back to MC for edge cases. Input validation catches invalid cards, duplicates, and impossible board states before computation begins." />
+        <StepCard number={4} delay={400} icon="#4" title="Action Advisor"
+          desc="The advisor combines equity with pot odds and draw analysis to recommend an action. It computes your equity, counts drawing outs (flush draws, straight draws, overcards), compares equity to pot odds, and recommends fold, call, raise, check, or bet. Semi-bluff detection identifies strong drawing hands worth raising with. Every recommendation includes step-by-step reasoning." />
+
+        <StepCard number={5} delay={500} icon="#5" title="Pre-Flop Range Grid"
+          desc="The range grid computes equity for all 169 starting hand types in a single request using the neural net. It produces a 13x13 heatmap where pairs sit on the diagonal, suited hands above, and offsuit hands below. All 169 equity calculations complete in under 200ms total." />
+
+        <StepCard number={6} delay={600} icon="#6" title="Hand History Parser"
+          desc="Upload a PokerStars hand history .txt file and the parser extracts each hand, identifies your hole cards and the board at each street, tracks opponent folds, and computes equity at every stage. Signed-in users can save parsed sessions to their account via Supabase for review across devices." />
       </div>
 
       {/* mc algorithm */}
@@ -144,14 +148,35 @@ export default function HowItWorksPage() {
 # ranks: 2=0, 3=1, ..., A=12
 # suits: clubs=0, diamonds=1, hearts=2, spades=3
 
-# example: you hold A♥ K♦, flop is T♠ 9♠ 2♣
-input = [0]*52 + [num_opponents]
-input[12*4 + 2] = 1  # A♥ (rank 12, suit 2)
-input[11*4 + 1] = 1  # K♦ (rank 11, suit 1)
-input[ 8*4 + 0] = 1  # T♠ (rank 8,  suit 0)
-input[ 7*4 + 0] = 1  # 9♠ (rank 7,  suit 0)
-input[ 0*4 + 0] = 1  # 2♣ (rank 0,  suit 0)
+# example: A♥ K♦ on T♠ 9♠ 2♣ flop, 2 opponents
+input = [0]*52 + [2]
+input[12*4 + 2] = 1  # A♥
+input[11*4 + 1] = 1  # K♦
+input[ 8*4 + 0] = 1  # T♠
+input[ 7*4 + 0] = 1  # 9♠
+input[ 0*4 + 0] = 1  # 2♣
 # 53-dim vector fed into the neural network`} />
+      </div>
+
+      {/* advisor logic */}
+      <div>
+        <h3 className="text-lg font-semibold mb-4" style={{ fontFamily: 'Syne' }}>
+          Advisor Decision Logic
+        </h3>
+        <CodeBlock code={`function recommend(equity, pot_odds, outs):
+    if no_bet_to_call:
+        if equity > 65%: BET (value)
+        elif equity > 45%: CHECK (pot control)
+        elif outs >= 8: BET (semi-bluff)
+        else: CHECK
+
+    if facing_a_bet:
+        surplus = equity - pot_odds
+        if equity > 65% and surplus > 15%: RAISE (value)
+        elif equity > pot_odds + 5%: CALL (profitable)
+        elif outs >= 9 and draw_equity > pot_odds: CALL (drawing)
+        elif outs >= 12: RAISE (semi-bluff)
+        else: FOLD`} />
       </div>
 
       {/* benchmarks */}
@@ -163,8 +188,8 @@ input[ 0*4 + 0] = 1  # 2♣ (rank 0,  suit 0)
           {[
             { label: 'Hand Eval Speed', value: '~15\u03BCs', sub: 'per evaluation (treys lookup table)' },
             { label: 'MC Equity (10K)', value: '~500ms', sub: 'parallelized across CPU cores' },
-            { label: 'MC Equity (50K)', value: '~2.3s', sub: 'higher precision mode' },
-            { label: 'Neural Net', value: '<10ms', sub: 'target inference latency' },
+            { label: 'Neural Net Inference', value: '<1ms', sub: '8,000x faster than MC' },
+            { label: 'Range Grid (169 hands)', value: '~190ms', sub: 'all starting hands at once' },
           ].map((b, i) => (
             <div key={i} className="bg-zinc-900/30 border border-zinc-800/50 rounded-xl p-4
               hover:border-zinc-700/60 transition-colors">

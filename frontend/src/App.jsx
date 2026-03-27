@@ -13,7 +13,7 @@ import UserMenu from './components/UserMenu'
 const TABS = [
   { id: 'calc', label: 'Calculator', icon: '\u2660' },
   { id: 'advisor', label: 'Advisor', icon: '\u2691' },
-  { id: 'range', label: 'Range Grid', icon: '\u25A6' },
+  { id: 'range', label: 'Ranges', icon: '\u25A6' },
   { id: 'history', label: 'History', icon: '\u2630' },
   { id: 'how', label: 'How It Works', icon: '\u2699' },
   { id: 'about', label: 'About', icon: '\u2726' },
@@ -22,8 +22,6 @@ const TABS = [
 function AppContent() {
   const { user, loading } = useAuth()
   const [tab, setTab] = useState('calc')
-
-  // show auth page if user clicks account while signed out
   const [showAuth, setShowAuth] = useState(false)
 
   if (loading) {
@@ -49,8 +47,8 @@ function AppContent() {
       <div className="relative z-10">
         {/* header */}
         <header className="border-b border-zinc-900/80">
-          <div className="max-w-2xl mx-auto px-6 pt-5 pb-0">
-            <div className="flex items-center justify-between mb-5">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-5 pb-0">
+            <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-1 text-zinc-600 text-lg">
                   <span>♠</span>
@@ -95,13 +93,13 @@ function AppContent() {
 
             {/* tabs */}
             {!showAuth && (
-              <div className="flex gap-0 overflow-x-auto">
+              <div className="flex gap-0 -mb-px overflow-x-auto scrollbar-hide">
                 {TABS.map((t) => (
                   <button
                     key={t.id}
                     onClick={() => setTab(t.id)}
-                    className={`relative px-4 py-3 text-sm font-medium transition-all
-                      duration-300 font-display whitespace-nowrap
+                    className={`relative px-3 sm:px-4 py-3 text-xs sm:text-sm font-medium
+                      transition-all duration-300 font-display whitespace-nowrap shrink-0
                       ${tab === t.id ? 'text-white' : 'text-zinc-600 hover:text-zinc-400'}`}
                   >
                     <span className="flex items-center gap-1.5">
@@ -111,10 +109,7 @@ function AppContent() {
                       {t.label}
                     </span>
                     {tab === t.id && (
-                      <div
-                        className="absolute bottom-0 left-0 right-0 h-[2px] bg-emerald-400"
-                        style={{ animation: 'fadeIn .2s ease-out' }}
-                      />
+                      <div className="absolute bottom-0 left-2 right-2 h-[2px] bg-emerald-400 rounded-full" />
                     )}
                   </button>
                 ))}
@@ -124,7 +119,7 @@ function AppContent() {
         </header>
 
         {/* page content */}
-        <main className="max-w-2xl mx-auto px-6 py-8" key={showAuth ? 'auth' : tab}>
+        <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8" key={showAuth ? 'auth' : tab}>
           {showAuth && !user ? (
             <AuthPage />
           ) : (
@@ -141,7 +136,7 @@ function AppContent() {
 
         {/* footer */}
         <footer className="border-t border-zinc-900/50 mt-16">
-          <div className="max-w-2xl mx-auto px-6 py-5 flex items-center justify-between">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 py-5 flex items-center justify-between">
             <span className="text-zinc-800 font-mono text-xs">
               monte carlo · treys · pytorch
             </span>

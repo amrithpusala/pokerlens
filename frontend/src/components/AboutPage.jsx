@@ -1,14 +1,13 @@
 export default function AboutPage() {
   return (
     <div className="space-y-10" style={{ animation: 'fadeIn .4s ease-out' }}>
-      {/* hero */}
       <div className="text-center py-8">
         <h2 className="text-3xl font-bold tracking-tight mb-3" style={{ fontFamily: 'Syne' }}>
           About PokerLens
         </h2>
         <p className="text-zinc-500 max-w-lg mx-auto text-sm leading-relaxed">
-          A free, open-source alternative to $250+ poker solvers.
-          Built for players who want real equity math without the price tag.
+          A free, open-source poker equity calculator, action advisor, and range analysis
+          tool. Built for players who want real math without the price tag.
         </p>
       </div>
 
@@ -22,7 +21,7 @@ export default function AboutPage() {
           PioSolver costs $250+, GTO Wizard runs $90/month, and most free
           alternatives are slow, inaccurate, or overloaded with ads. There
           is no fast, free, web-based option that does real-time equity
-          computation with transparent methodology.
+          computation with action recommendations and transparent methodology.
         </p>
       </div>
 
@@ -35,10 +34,33 @@ export default function AboutPage() {
           PokerLens uses Monte Carlo simulation for precision and a trained
           neural network for speed. The MC engine runs 10,000+ random
           rollouts to compute exact win/tie/loss percentages. The neural
-          net approximates the same result in under 10ms, a 100x speedup
-          that enables real-time interaction without waiting for simulation
-          to finish.
+          net approximates the same result in under 1ms, enabling real-time
+          features like the action advisor and the 169-hand range grid.
+          Users can sign in to save hand history analyses across devices.
         </p>
+      </div>
+
+      {/* features */}
+      <div>
+        <h3 className="text-lg font-semibold mb-4" style={{ fontFamily: 'Syne' }}>
+          Features
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {[
+            { name: 'Equity Calculator', desc: 'Monte Carlo win/tie/loss with configurable iterations' },
+            { name: 'Action Advisor', desc: 'Fold/call/raise recommendations with pot odds and draw analysis' },
+            { name: 'Pre-Flop Range Grid', desc: '13x13 heatmap of all 169 starting hand equities' },
+            { name: 'Hand History Parser', desc: 'Upload PokerStars .txt files, see equity at every street' },
+            { name: 'Neural Net Inference', desc: 'Sub-1ms equity predictions trained on 50K+ simulations' },
+            { name: 'Cloud Sync', desc: 'Sign in with Google or GitHub to save histories across devices' },
+          ].map((f, i) => (
+            <div key={i} className="bg-zinc-900/30 border border-zinc-800/50 rounded-xl p-4
+              hover:border-zinc-700/50 transition-colors">
+              <div className="text-white text-sm font-semibold">{f.name}</div>
+              <div className="text-zinc-600 text-xs mt-1">{f.desc}</div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* tech stack */}
@@ -52,8 +74,10 @@ export default function AboutPage() {
             { name: 'FastAPI', role: 'API Layer', icon: 'API' },
             { name: 'Python + treys', role: 'MC Engine', icon: 'MC' },
             { name: 'PyTorch', role: 'Neural Network', icon: 'NN' },
+            { name: 'Supabase', role: 'Auth + Database', icon: 'DB' },
             { name: 'Tailwind CSS', role: 'Styling', icon: 'CSS' },
-            { name: 'Redis', role: 'Cache Layer', icon: 'DB' },
+            { name: 'Vercel', role: 'Frontend Hosting', icon: 'FE' },
+            { name: 'Render', role: 'Backend Hosting', icon: 'BE' },
           ].map((t, i) => (
             <div key={i} className="bg-zinc-900/30 border border-zinc-800/50 rounded-xl p-4
               flex items-center gap-3 hover:border-zinc-700/50 transition-colors group">
@@ -81,13 +105,18 @@ export default function AboutPage() {
             { done: true, label: 'Hand evaluator with full test coverage' },
             { done: true, label: 'Monte Carlo equity engine with multiprocessing' },
             { done: true, label: 'FastAPI backend with equity endpoints' },
-            { done: true, label: 'React frontend with card picker UI' },
-            { done: true, label: 'Neural net training pipeline' },
-            { done: true, label: 'Neural net inference endpoint (<10ms)' },
-            { done: true, label: 'Pre-flop range grid heatmap' },
-            { done: true, label: 'Hand history parser and session review' },
-            { done: false, label: 'Redis caching layer' },
-            { done: true, label: 'Deploy to Vercel + Railway' },
+            { done: true, label: 'React frontend with interactive card picker' },
+            { done: true, label: 'Neural net training pipeline (50K samples)' },
+            { done: true, label: 'Neural net inference endpoint (<1ms)' },
+            { done: true, label: 'Action advisor with pot odds and draw analysis' },
+            { done: true, label: 'Pre-flop range grid heatmap (169 hands)' },
+            { done: true, label: 'Hand history parser with street-by-street equity' },
+            { done: true, label: 'Google and GitHub authentication' },
+            { done: true, label: 'Cloud sync for saved hand histories' },
+            { done: true, label: 'Deploy to Vercel + Render' },
+            { done: true, label: 'CORS lockdown, rate limiting, security hardening' },
+            { done: false, label: 'Expand training data to 500K+ samples' },
+            { done: false, label: 'GTO push/fold charts for tournament play' },
           ].map((item, i) => (
             <div
               key={i}
