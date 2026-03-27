@@ -95,48 +95,16 @@ export default function AboutPage() {
         </div>
       </div>
 
-      {/* roadmap */}
-      <div>
-        <h3 className="text-lg font-semibold mb-4" style={{ fontFamily: 'Syne' }}>
-          Roadmap
+      {/* open source */}
+      <div className="bg-zinc-900/20 border border-zinc-800/50 rounded-2xl p-6 space-y-4">
+        <h3 className="text-lg font-semibold flex items-center gap-2" style={{ fontFamily: 'Syne' }}>
+          <span className="text-zinc-400 text-sm">03</span> Open Source
         </h3>
-        <div className="space-y-2">
-          {[
-            { done: true, label: 'Hand evaluator with full test coverage' },
-            { done: true, label: 'Monte Carlo equity engine with multiprocessing' },
-            { done: true, label: 'FastAPI backend with equity endpoints' },
-            { done: true, label: 'React frontend with interactive card picker' },
-            { done: true, label: 'Neural net training pipeline (50K samples)' },
-            { done: true, label: 'Neural net inference endpoint (<1ms)' },
-            { done: true, label: 'Action advisor with pot odds and draw analysis' },
-            { done: true, label: 'Pre-flop range grid heatmap (169 hands)' },
-            { done: true, label: 'Hand history parser with street-by-street equity' },
-            { done: true, label: 'Google and GitHub authentication' },
-            { done: true, label: 'Cloud sync for saved hand histories' },
-            { done: true, label: 'Deploy to Vercel + Render' },
-            { done: true, label: 'CORS lockdown, rate limiting, security hardening' },
-            { done: false, label: 'Expand training data to 500K+ samples' },
-            { done: false, label: 'GTO push/fold charts for tournament play' },
-          ].map((item, i) => (
-            <div
-              key={i}
-              className={`flex items-center gap-3 py-2 px-3 rounded-lg transition-colors
-                ${item.done ? 'bg-emerald-400/5' : 'hover:bg-zinc-900/30'}`}
-            >
-              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center
-                text-xs transition-all
-                ${item.done
-                  ? 'border-emerald-400/60 bg-emerald-400/10 text-emerald-400'
-                  : 'border-zinc-700'}`}
-              >
-                {item.done && '\u2713'}
-              </div>
-              <span className={`text-sm ${item.done ? 'text-zinc-300' : 'text-zinc-600'}`}>
-                {item.label}
-              </span>
-            </div>
-          ))}
-        </div>
+        <p className="text-zinc-400 text-sm leading-relaxed">
+          PokerLens is fully open source under the MIT license. The entire codebase,
+          including the Monte Carlo engine, neural net training pipeline, and frontend,
+          is available on GitHub. Contributions and feedback are welcome.
+        </p>
       </div>
 
       {/* built by */}
