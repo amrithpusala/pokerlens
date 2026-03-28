@@ -43,7 +43,7 @@ def generate_one_sample(seed):
     hand_strs=hand,
     board_strs=board,
     num_opponents=num_opponents,
-    iterations=3000,  # 3K is enough for training labels
+    iterations=10000,  # 10K is enough for training labels
     num_workers=1     # single worker per sample since we parallelize at sample level
   )
 
